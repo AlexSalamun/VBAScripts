@@ -1,0 +1,58 @@
+Attribute VB_Name = "SharePoint_List_Edit"
+Sub vbCreateSharePointList()
+'Written by Alex Salamun 11May2018
+'Standard References Visual Basic for Applications; Microsoft Office 14.0 Object Library; Microsoft Excel 14.0 Object Library; OLE Automation;
+'References  Microsoft XML, v6.0
+
+'Call DeleteSharePointList 'Call to Delete the SharePoint List
+
+'Create the necessary variables
+Dim ws As Worksheet, lst As ListObject
+Dim str As String, dest(2) As Variant
+
+Set ws = ActiveSheet
+Set lst = ws.ListObjects("TABLENAME") 'Put in the name of the Excel Table to turn into a list
+dest(0) = "https://sharepoint2013/sites/" 'Choose the url location to upload the list
+dest(1) = "TABLENAME" 'Name of the list
+dest(2) = "Uploaded Sharepoint List" 'Description of the list
+str = lst.Publish(dest, False) 'change False to True to link the site with excel
+' Display the shared list in the browser.
+
+End Sub
+
+Public Sub vbDeleteSharePointList()
+'Written by Alex Salamun 11May2018
+'Standard References Visual Basic for Applications; Microsoft Office 14.0 Object Library; Microsoft Excel 14.0 Object Library; OLE Automation;
+'References  Microsoft XML, v6.0
+
+'Create the necessary variables
+    Dim sURL As String
+    Dim sEnv As String
+    Dim xmlhtp As New MSXML2.XMLHTTP
+    Dim xmlDoc As New DOMDocument
+    
+'Build the XML Skeleton
+    sURL = "https://sharepoint2013/sites/......../_vti_bin/lists.asmx" 'replace the ....... with the site URL that you want to delete,
+                                                              'it must end with _vti_bin/lists.asmx
+    sEnv = "<?xml version=""1.0"" encoding=""utf-8""?>"
+    sEnv = sEnv & "<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">"
+    sEnv = sEnv & "  <soap:Body>"
+    sEnv = sEnv & "    <DeleteList xmlns=""http://schemas.microsoft.com/sharepoint/soap/"">"
+    sEnv = sEnv & "      <listName>TABLENAME</listName>" 'Change the name of the list here
+    sEnv = sEnv & "    </DeleteList>"
+    sEnv = sEnv & "  </soap:Body>"
+    sEnv = sEnv & "</soap:Envelope>"
+
+    With xmlhtp
+        .Open "post", sURL, False
+        .setRequestHeader "Host", "https://sharepoint2013/sites/" 'Edit site URL
+        .setRequestHeader "Content-Type", "text/xml; charset=utf-8"
+        .setRequestHeader "soapAction", "http://schemas.microsoft.com/sharepoint/soap/DeleteList"
+        .send sEnv
+        xmlDoc.LoadXML .responseText
+        MsgBox .responseText
+    End With
+    
+    
+End Sub
+

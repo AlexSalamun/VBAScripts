@@ -1,0 +1,30 @@
+Attribute VB_Name = "MapNetworkDrives"
+Option Explicit
+Sub vbMapNetwork()
+'Script developed
+'This script takes a sharepoint address and creates a network folder of the site
+
+'Begin by setting the necessary variables
+    Dim strSharepointAddress As String
+    Dim LocalAddress As String
+    Dim objNet As Object
+    Dim FS As Object
+
+Call OptimizeCode_Begin 'Initiate code optimizers
+    
+    'change the path here to reflect the sharepoint address that you want to use.
+    strSharepointAddress = "https://sharepoint2013/sites/"
+
+    'Creating network objects
+    Set objNet = CreateObject("WScript.Network")
+    Set FS = CreateObject("Scripting.FileSystemObject")
+    On Error Resume Next
+    'this line creates the NetworkFolder as driver A:, you can change if needed
+    objNet.MapNetworkDrive "A:", strSharepointAddress
+    'This script can be used as a replacement to the MapNetworkDrive tool
+    
+    Call OptimizeCode_End 'Remove code optimizers
+    Set objNet = Nothing
+    Set FS = Nothing
+
+End Sub

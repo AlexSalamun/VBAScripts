@@ -4,7 +4,7 @@ Sub vbOutlookEmail()
 'Standard References Visual Basic for Applications; Microsoft Office 14.0 Object Library; Microsoft Excel 14.0 Object Library; OLE Automation;
 'References the Microsoft Outlook 14.0 Object Library
 'This script automates an email in outlook
-
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
     Dim OutApp As Object
     Dim OutMail As Object
     Dim emailbody As String

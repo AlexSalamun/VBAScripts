@@ -1,0 +1,115 @@
+Public strConnectString        As String
+Public objConnection           As ADODB.Connection
+Public strDbPath               As String
+Public strTblName              As String
+Sub Create_Table()
+    'Add Reference to Microsoft ActiveX Data Objects 2.x Library
+
+
+
+    Dim sht                     As Worksheet
+
+
+
+    Set sht = Worksheets("Database")
+
+    'Set database name and DB connection string--------
+    strDbPath = "C:\Users\alex.salamun\Desktop\Test.accdb"
+    '==================================================
+    strTblName = "Test"
+    strConnectString = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source=" & strDbPath
+
+    'Connect Database; insert a new table
+    Set objConnection = New ADODB.Connection
+   On Error Resume Next
+    With objConnection
+        '.Execute "DROP TABLE Test"
+        .Open strConnectString
+        .Execute "CREATE TABLE " & strTblName & " (" & _
+                 "[Field1] text(150), " & _
+                 "[Field2] char(150), " & _
+                 "[Field3] memo, " & _
+                 "[Field4] byte, " & _
+                 "[Field5] short, " & _
+                 "[Field6] long, " & _
+                 "[Field7] single, " & _
+                 "[Field8] double, " & _
+                 "[Field9] guid, " & _
+                 "[Field10] decimal(2,0), " & _
+                 "[Field11] datetime, " & _
+                 "[Field12] currency, " & _
+                 "[Field13] counter(1,1), " & _
+                 "[Field14] yesno, " & _
+                 "[Field15] longbinary, " & _
+                 "[Field16] binary(150))"
+
+    End With
+
+    Set objConnection = Nothing
+
+End Sub
+Sub InsertSQL()
+'Add Reference to Microsoft ActiveX Data Objects 2.x Library
+    Dim lngRow                  As Long
+    Dim strSQL                  As String
+
+
+    Dim sht                     As Worksheet
+
+    Set sht = Worksheets("Database")
+
+    'Set database name and DB connection string--------
+    strDbPath = "C:\Users\alex.salamun\Desktop\Test.accdb"
+    '==================================================
+    strTblName = "Test"
+    strConnectString = "Provider = Microsoft.ACE.OLEDB.12.0; data source=" & strDbPath
+    iRowNo = 2
+    'Connect Database; insert a new table
+    Set objConnection = New ADODB.Connection
+    'On Error Resume Next
+    With objConnection
+        .Open strConnectString
+            
+             lngLastRow = ActiveSheet.Cells(ActiveSheet.Rows.Count, "A").End(xlUp).Row
+            'Loop until lastrow is reached
+                    Do Until iRowNo = lngLastRow + 1
+    
+                        C1 = sht.Cells(iRowNo, 1)
+                        C2 = sht.Cells(iRowNo, 2)
+                        C3 = sht.Cells(iRowNo, 3)
+        
+                        strSQL = "INSERT INTO " & strTblName & "(Field1, Field2, Field3) " & _
+                                       "values ('" & C1 & "','" & C2 & "','" & C3 & "')"
+        
+                        .Execute strSQL
+                       iRowNo = iRowNo + 1
+                    Loop
+        
+    End With
+        MsgBox "Database has been updated"
+    Set objConnection = Nothing
+
+End Sub
+Sub DropTable_SQL()
+
+Dim strSQL As String
+Dim cmd As New ADODB.Command
+
+Set objConnection = New ADODB.Connection
+Set cmd = New ADODB.Command
+
+    'Set database name and DB connection string--------
+    strDbPath = "C:\Users\alex.salamun\Desktop\Test.accdb"
+    '==================================================
+    strTblName = "Test"
+    strConnectString = "Provider = Microsoft.ACE.OLEDB.12.0; data source=" & strDbPath
+
+strSQL = "DROP TABLE " & strTblName
+cmd.CommandText = strSQL
+objConnection.Open strConnectString
+With cmd
+    .ActiveConnection = strConnectString
+    .Execute strSQL
+End With
+
+End Sub

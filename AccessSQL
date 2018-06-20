@@ -5,8 +5,6 @@ Public strTblName              As String
 Sub Create_Table()
     'Add Reference to Microsoft ActiveX Data Objects 2.x Library
 
-' hello pls
-
     Dim sht                     As Worksheet
 
 

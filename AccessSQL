@@ -3,6 +3,7 @@ Public objConnection           As ADODB.Connection
 Public strDbPath               As String
 Public strTblName              As String
 Sub Create_Table()
+    'This script was written using Excel 2010
     'Add Reference to Microsoft ActiveX Data Objects 2.x Library
     'You must first create an Access Database, and save it to your local machine
     'Set database name and DB connection string--------
@@ -43,8 +44,9 @@ Sub InsertSQL()
 'This will write your Excel Data automatically to your Access Database
 'Important Note: the field types and amount of fields must match when doing the transfer
 'Add Reference to Microsoft ActiveX Data Objects 2.x Library
-    Dim lngRow                  As Long
-    Dim strSQL                  As String
+    Dim lngLastRow                  As Long
+    Dim strSQL                      As String
+    dim iRowNo                      As Integer
 
 
     Dim sht                     As Worksheet
@@ -52,9 +54,9 @@ Sub InsertSQL()
     Set sht = Worksheets("mySheet")
 
     'Set database name and DB connection string--------
-    strDbPath = "C:\Users\alex.salamun\Desktop\Test.accdb"
+    strDbPath = "C:\"  'Put the path to AccessDatabase on your local machine
     '==================================================
-    strTblName = "Test"
+    strTblName = "myTable" 'The name of the table you want to update
     strConnectString = "Provider = Microsoft.ACE.OLEDB.12.0; data source=" & strDbPath
     iRowNo = 2
     'Connect Database; insert a new table
@@ -92,9 +94,9 @@ Set objConnection = New ADODB.Connection
 Set cmd = New ADODB.Command
 
     'Set database name and DB connection string--------
-    strDbPath = "C:\Users\alex.salamun\Desktop\Test.accdb"
+    strDbPath = "C:\" 'Put the path to AccessDatabase on your local machine
     '==================================================
-    strTblName = "Test"
+    strTblName = "myTable" 'The name of the table to DROP
     strConnectString = "Provider = Microsoft.ACE.OLEDB.12.0; data source=" & strDbPath
 
 strSQL = "DROP TABLE " & strTblName

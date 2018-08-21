@@ -1,0 +1,127 @@
+Sub ListAllPivotCaches()
+' Developed by www.contextures.com
+' list all pivot caches in active workbook
+Dim pc As PivotCache
+Dim wb As Workbook
+Dim ws As Worksheet
+Dim lRow As Long
+Dim wsAll As Worksheet
+Dim lPC As Long
+Dim lPCs As Long
+Dim lFields As Long
+Dim lColDate As Long
+Dim ptAll As PivotTable
+Dim strSource As String
+Dim strST As String
+Dim rngS As Range
+Dim strSourceR1C1 As String
+On Error Resume Next
+Application.EnableEvents = False
+
+lRow = 1
+lFields = 7
+lColDate = 6
+Set wb = ActiveWorkbook
+lPCs = wb.PivotCaches.Count
+
+If lPCs = 0 Then
+  MsgBox "No pivot caches in the workbook"
+  'Exit Sub
+End If
+Set ws = Sheets("Pivots")
+If ws Is Nothing Then
+    Set ws = wb.Worksheets.Add(After:=wb.Sheets("TOC"))
+    ws.Name = "Pivots"
+Else
+    Application.DisplayAlerts = False
+    ws.Delete
+    Set ws = wb.Worksheets.Add(After:=wb.Sheets("TOC"))
+    ws.Name = "Pivots"
+End If
+
+
+With ws
+  .Range(.Cells(1, 1), .Cells(1, lFields)) _
+      .Value = Array("Cache Index", _
+        "PTs", _
+        "Records", _
+        "Source Type", _
+        "Data Source", _
+        "Refresh DateTime", _
+        "Refresh Open")
+End With
+
+lRow = lRow + 1
+
+For Each pc In wb.PivotCaches
+  'count the pivot tables
+  lPC = 0
+  Select Case pc.SourceType
+    Case 1
+      strSourceR1C1 = pc.SourceData
+      strSource = Application.ConvertFormula("=" & _
+          strSourceR1C1, xlR1C1, xlA1)
+      strSource = Replace(strSource, "[" & wb.Name & "]", "")
+      strSource = Right(strSource, Len(strSource) - 1)
+      strST = "xlDatabase"
+    Case Else
+      strSource = "N/A"
+      strST = "Other Source"
+  End Select
+  
+  For Each wsAll In wb.Worksheets
+     For Each ptAll In wsAll.PivotTables
+        
+        If ptAll.CacheIndex = pc.Index Then
+           lPC = lPC + 1
+        End If
+     Next ptAll
+  Next wsAll
+
+  With ws
+    On Error Resume Next
+     ws.Range(ws.Cells(lRow, 1), _
+      ws.Cells(lRow, lFields)).Value = _
+       Array(pc.Index, _
+        lPC, _
+        pc.RecordCount, _
+        strST, _
+        strSource, _
+        pc.RefreshDate, _
+        pc.RefreshOnFileOpen)
+  End With
+  
+  
+  lRow = lRow + 1
+Next pc
+
+With ws
+  With .Range(.Cells(1, 1), .Cells(1, lFields))
+    .EntireRow.Font.Bold = True
+    .EntireColumn.AutoFit
+  End With
+  .Columns(lColDate).NumberFormat _
+      = "[$-409]dd-mmm-yyyy h:mm AM/PM;@"
+End With
+Application.EnableEvents = True
+Call Memory
+End Sub
+
+Sub Memory()
+'Developed to work in tandem with the ListAllPivotCaches() Subroutine
+Dim pc As PivotCache
+Dim wb As Workbook
+
+Range("H1").Activate
+ActiveCell.Value = "Memory Used(MB)"
+Range("H2").Activate
+Set wb = ActiveWorkbook
+For Each pc In wb.PivotCaches
+    Do
+        If ActiveCell.Value = "" Then Exit Do
+        ActiveCell.Offset(1, 0).Activate
+    Loop
+    ActiveCell.Value = Round(pc.MemoryUsed, 0) / 1000000 ' & " MB"
+Next pc
+
+End Sub

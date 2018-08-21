@@ -1,4 +1,4 @@
-Attribute VB_Name = "TableofContentsNew"
+Attribute VB_Name = "TableofContents"
 Sub TOC()
 'PURPOSE: Add a Table of Contents worksheets to easily navigate to any tab
 

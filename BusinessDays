@@ -1,0 +1,64 @@
+Option Explicit
+Sub ApprovedDaysOut()
+
+Dim cc As Range, cc2
+Dim rng As Range, rng2 As Range
+Dim searchRng As Range
+Dim lngLastRow As Long
+Dim ccName As String, ccClass As String, ccStage As String, ccUser As String, ccDept As String, ccSuper As Variant, ccDays As Long
+
+lngLastRow = ActiveSheet.Cells(ActiveSheet.Rows.Count, "A").End(xlUp).Row
+ActiveSheet.ListObjects("TableCC").Range.AutoFilter Field:=2, Criteria1:="Tarrytown"
+Set rng = ActiveSheet.Range("TableCC[Name]").SpecialCells(xlCellTypeVisible)
+On Error Resume Next
+For Each cc In rng
+    ccName = cc.Value
+    ccClass = cc.Offset(0, 3).Value
+    ccStage = cc.Offset(0, 4).Value
+    ccUser = cc.Offset(0, 5).Value
+    ccDept = cc.Offset(0, 2).Value
+    ccSuper = cc.Offset(0, 6).Value
+    ccDays = cc.Offset(0, 7).Value
+        Windows("Change Control Tracker - VBA.xlsm").Activate
+                    With ActiveSheet.Range("A:A")
+                    
+                        Set searchRng = .Find(What:=ccName, After:=.Cells(.Cells.Count), LookIn:=xlValues, LookAt:=xlWhole, SearchOrder:=xlByRows, _
+                        SearchDirection:=xlNext, MatchCase:=False)
+                        
+                            If searchRng Is Nothing Then
+                                lngLastRow = ActiveSheet.Cells(ActiveSheet.Rows.Count, "A").End(xlUp).Row
+                                Range("A" & lngLastRow + 1).Activate
+                            Else: searchRng.Activate
+                            End If
+                    End With
+        ActiveCell.Value = ccName
+        ActiveCell.Offset(0, 1).Value = ccClass
+        ActiveCell.Offset(0, 2).Value = ccStage
+        ActiveCell.Offset(0, 3).Value = ccUser
+        If Err.Number <> 13 Then ActiveCell.Offset(0, 4).Value = ccDept
+        If Err.Number <> 13 Then ActiveCell.Offset(0, 5).Value = ccSuper
+        ActiveCell.Offset(0, 6).Value = ccDays
+        Err.Number = 0
+Next cc
+On Error GoTo 0
+
+    Range("H2").Select
+    ActiveCell.FormulaR1C1 = "Closed"
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.FillDown
+
+Set rng2 = Range("Table4[Name]")
+For Each cc2 In rng2
+    cc2.Activate
+    For Each cc In rng
+        If cc2.Value = cc.Value Then
+            cc2.Offset(0, 7).Value = "Still There"
+            GoTo nexter
+        End If
+    Next cc
+nexter:
+Next cc2
+
+Range("L1").Value = Date
+End Sub
+

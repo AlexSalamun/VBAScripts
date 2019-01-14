@@ -113,6 +113,7 @@ Set rng = Range("TableCC[Owner''s Supervisor]").SpecialCells(xlCellTypeVisible)
                     Signature = ""
                 End If
 
+If InStr(strUser, "DANIEL.LIQUORI") > 0 Then
                 With OutMail
                     .To = strUser
                     .cc = "QualityOpsTTChangeControl@regeneron.com"
@@ -120,11 +121,25 @@ Set rng = Range("TableCC[Owner''s Supervisor]").SpecialCells(xlCellTypeVisible)
                     '.SentOnBehalfOfName = "QualityOpsTTChangeControl@regeneron.com"
                     .Subject = "Active Changes for your Department"
                     .HTMLBody = emailbody & "<br>" & Signature
-                    '.Attachments.Add = ""
+                    .Attachments.Add ("C:\Users\alex.salamun\Desktop\Copy of Current Change Control Status 14Jan2019.xlsm")
                     ' In place of the following statement, you can use ".Send" to
                     ' automatically send the mail.
                     .Display
-            End With
+                End With
+Else
+                With OutMail
+                    .To = strUser
+                    .cc = "QualityOpsTTChangeControl@regeneron.com"
+                    .BCC = ""
+                    '.SentOnBehalfOfName = "QualityOpsTTChangeControl@regeneron.com"
+                    .Subject = "Active Changes for your Department"
+                    .HTMLBody = emailbody & "<br>" & Signature
+                    '.Attachments.Add ("Copy of Current Change Control Status 14Jan2019.xlsm")
+                    ' In place of the following statement, you can use ".Send" to
+                    ' automatically send the mail.
+                    .Display
+                End With
+End If
         
         
         strUser = Empty
@@ -244,3 +259,6 @@ Function GetBoiler(ByVal sFile As String) As String
     GetBoiler = ts.readall
     ts.Close
 End Function
+
+
+

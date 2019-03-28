@@ -1,0 +1,43 @@
+Public Sub GetUsers()
+
+Dim myolApp As Outlook.Application 'Add the microsoft outlook object library reference
+Dim myNameSpace As Namespace
+Dim myAddrList As AddressList
+Dim myAddrEntry As AddressEntry   'I changed this variable to avoid ambiguity
+Dim AliasName As String
+Dim i As Integer, r As Integer
+Dim c As Range
+Dim EndRow As Integer, n As Integer
+Dim exchUser As Outlook.ExchangeUser
+
+Set myolApp = CreateObject("Outlook.Application")
+Set myNameSpace = myolApp.GetNamespace("MAPI")
+Set myAddrList = myNameSpace.AddressLists("Global Address List")
+
+Dim FullName As String, LastName As String, FirstName As String
+Dim HomeState As String, PhoneNum As String, Department As String
+Dim StartRow As Integer
+
+EndRow = Cells(Rows.Count, 1).End(xlUp).Row
+
+StartRow = InputBox("At which row should this start?", "Start Row", 2)
+
+For Each c In Range("B" & StartRow & ":B" & CStr(EndRow)).SpecialCells(xlCellTypeVisible)
+    FullName = c
+    Set myAddrEntry = myAddrList.AddressEntries(FullName)
+    Set exchUser = myAddrEntry.GetExchangeUser
+
+    If Not exchUser Is Nothing Then
+        UserName = exchUser.Alias
+        Department = exchUser.Department
+        Location = exchUser.City
+        Title = exchUser.JobTitle
+        Phone = exchUser.BusinessTelephoneNumber
+    End If
+    'c.Offset(, 1) = FullName
+    c.Offset(, 1) = Department
+    c.Offset(, 2) = Location
+    c.Offset(, 3) = Title
+    c.Offset(, 4) = Phone
+Next c
+End Sub
